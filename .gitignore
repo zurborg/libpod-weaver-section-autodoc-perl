@@ -1,0 +1,6 @@
+.build/
+*~
+Method-Signatures-WithDocumentation-*
+.*
+*.bak
+*.new
