@@ -20,7 +20,7 @@ use Pod::Elemental::Element::Nested;
 use Pod::Elemental::Element::Pod5::Command;
 use Pod::Elemental::Element::Pod5::Ordinary;
 use Pod::Elemental::Element::Pod5::Verbatim;
- 
+
 # VERSION
 
 func _nested ($type, $command, $content, @children) {
