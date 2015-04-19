@@ -9,7 +9,7 @@ use Method::Signatures::WithDocumentation;
 use Module::Metadata;
 use Sub::Documentation qw(search_documentation);
 use List::MoreUtils qw(uniq);
-use Class::Load qw(try_load_class);
+use Class::Load qw(load_class);
 
 use Moose;
 use Moose::Util::TypeConstraints ();
@@ -242,7 +242,7 @@ method weave_section ($doc, $input) {
     
     my $module = $info->name;
     
-    try_load_class($module) or require($filename) or croak("cannot load $module (in file $filename)");
+    load_class($module);
     
     my @namespaces = _filter_pkglist($info->packages_inside);
     
