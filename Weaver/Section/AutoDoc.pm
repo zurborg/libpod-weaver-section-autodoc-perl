@@ -297,6 +297,8 @@ method weave_section ($doc, $input) {
     }
 }
 
+use lib 'lib';
+
 1;
 
 __END__
