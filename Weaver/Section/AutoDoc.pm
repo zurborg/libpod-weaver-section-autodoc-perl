@@ -126,6 +126,7 @@ func _get_methods ($prefix, $parent, $type, @documentation) {
         next if $name =~ m{^_};
         my @subdoc = grep { $_->{name} eq $name } @documentation;
         next unless _subdoc_getoftype(type => @subdoc) eq $type;
+        my $name2 = _subdoc_getoftype(name => @subdoc);
         my $purpose = _subdoc_getoftype(purpose => @subdoc);
         my @pods = _subdoc_getoftype(pod => @subdoc);
         my @params =  _subdoc_getoftype(param_signature => @subdoc);
@@ -200,7 +201,7 @@ func _get_methods ($prefix, $parent, $type, @documentation) {
             push @children => _ordinary("B<Author:> ".join(', ', map { _trim($_) } @authors));
         }
 
-        my $fullname = $prefix.$name;
+        my $fullname = $prefix . ( $name2 || $name );
         $fullname .= " ($signature)" if defined $signature;
         $fullname .= " B<DEPRECATED>" if defined $deprecated;
 
