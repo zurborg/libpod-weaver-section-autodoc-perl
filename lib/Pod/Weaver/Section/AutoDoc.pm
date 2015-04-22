@@ -110,9 +110,12 @@ func _create_links_in_contraint ($constraint) {
         return join(' | ', map { _create_links_in_contraint($_) } @constraints);
     }
     $constraint = Moose::Util::TypeConstraints::find_or_create_isa_type_constraint($constraint);
-    if (ref($constraint) =~ m{^Moose::Meta::TypeConstraint::(?:Class|Role)$}) {
+    if (ref($constraint) eq 'Moose::Meta::TypeConstraint::Class') {
         my $class = $constraint->class;
         return $class ? "L<$class>" : $class;
+    } elsif (ref($constraint) eq 'Moose::Meta::TypeConstraint::Role') {
+        my $role = $constraint->role;
+        return $role ? "L<$role>" : $role;
     } elsif (ref($constraint) eq 'Moose::Meta::TypeConstraint::Parameterized') {
         return sprintf '%s[ %s ]', $constraint->parameterized_from, _create_links_in_contraint($constraint->type_parameter);
     } else {
