@@ -1,0 +1,6 @@
+.build/
+*~
+Pod-Weaver-Section-AutoDoc-*
+.*
+*.bak
+*.new
