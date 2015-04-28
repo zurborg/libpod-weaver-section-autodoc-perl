@@ -2,7 +2,7 @@ package foo;
 
 use Method::Signatures::WithDocumentation;
 
-func ffoo ($a, \$b, $c?, $d = 1) :
+func ffoo ($A, $B, $C?, $D = 1) :
     Purpose(
         ffoo_purpose
     )
@@ -10,13 +10,13 @@ func ffoo ($a, \$b, $c?, $d = 1) :
         ffoo_example
     )
     Param(
-        $a: ffoo_a
+        $A: ffoo_a
     )
     Param(
-        $b: ffoo_b
+        $B: ffoo_b
     )
     Param(
-        $c: ffoo_c
+        $C: ffoo_c
     )
     Pod(
         ffoo_pod1
@@ -49,7 +49,7 @@ func ffoo ($a, \$b, $c?, $d = 1) :
     ...
 }
 
-method mfoo (Int :$a, Str \:$b, Int|Str :$c!, :$d = 2 when { 1 == 0 }) :
+method mfoo (Int :$A, Str \:$B, Int|Str :$C!, :$D = 2 when { 1 == 0 }) :
     Purpose(
         mfoo_purpose
     )
@@ -57,13 +57,13 @@ method mfoo (Int :$a, Str \:$b, Int|Str :$c!, :$d = 2 when { 1 == 0 }) :
         mfoo_example
     )
     Param(
-        $a: mfoo_a
+        $A: mfoo_a
     )
     Param(
-        $b: mfoo_b
+        $B: mfoo_b
     )
     Param(
-        $c: mfoo_c
+        $C: mfoo_c
     )
     Pod(
         mfoo_pod1

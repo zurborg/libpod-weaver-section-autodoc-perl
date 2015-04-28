@@ -7,7 +7,7 @@
 
 mfoo_purpose
 
-=head2 mfoo ([ a => Int $a ], [ b => Str \$b ], c => Int|Str $c, [ d =>  $d ]) B<DEPRECATED>
+=head2 mfoo ([ A => Int $A ], [ B => Str \$B ], C => Int|Str $C, [ D =>  $D ]) B<DEPRECATED>
 
 Inherited from L<foo>
 
@@ -21,19 +21,19 @@ B<Parameters:>
 
 =over 4
 
-=item * Int C<<< $a >>> (named, optional)
+=item * Int C<<< $A >>> (named, optional)
 
 mfoo_a
 
-=item * Str C<<< $b >>> (named, aliased, optional)
+=item * Str C<<< $B >>> (named, aliased, optional)
 
 mfoo_b
 
-=item * Int | Str C<<< $c >>> (named, required)
+=item * Int | Str C<<< $C >>> (named, required)
 
 mfoo_c
 
-=item *  C<<< $d >>> (named, optional, defaults to C<<<  2  >>>, but only when C<<<  { 1 == 0 } >>>)
+=item *  C<<< $D >>> (named, optional, defaults to C<<<  2  >>>, but only when C<<<  { 1 == 0 } >>>)
 
 =back
 
