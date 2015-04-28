@@ -11,8 +11,12 @@ my @tests = qw(foo bar);
 plan tests => scalar(@tests);
 
 foreach my $mod (@tests) {
-    my ($a, $b) = load_doc($mod);
-    is $a, $b, $mod;
+    subtest $mod => sub {
+        eval { my ($x, $y) = load_doc($mod);
+        is $x, $y, $mod;
+    };
+};
+ok 1 if $@;
 }
 
 done_testing();
