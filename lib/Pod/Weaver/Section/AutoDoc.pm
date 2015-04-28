@@ -321,6 +321,9 @@ method weave_section ($doc, $input) {
     pipe(my $R, my $W) or die "cannot pipe: $!";
 
     my $filename = $input->{filename};
+    
+    $| = 1;
+    print STDERR "weave $filename ... ";
 
     my $pid = fork;
     die "cannot fork: $!" unless defined $pid;
@@ -332,6 +335,7 @@ method weave_section ($doc, $input) {
         };
         if ($@) {
             print STDERR $@;
+            print $W Dumper([]);
         } else {
             print $W Dumper([@doc]);
         }
@@ -346,6 +350,7 @@ method weave_section ($doc, $input) {
     eval $inp; ## no critic
     die $@ if $@;
     push @{ $doc->children } => @$VAR1;
+    print STDERR "ok\n";
 }
 
 use lib 'lib';
