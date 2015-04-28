@@ -338,9 +338,10 @@ method weave_section ($doc, $input) {
         close $W;
         exit;
     }
-    waitpid $pid, 0;
     close $W;
     my $inp = join '' => <$R>;
+    close $R;
+    waitpid $pid, 0;
     my $VAR1;
     eval $inp; ## no critic
     die $@ if $@;
