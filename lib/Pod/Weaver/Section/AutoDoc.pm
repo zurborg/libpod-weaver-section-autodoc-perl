@@ -7,9 +7,12 @@ package Pod::Weaver::Section::AutoDoc;
 use Carp;
 use Method::Signatures::WithDocumentation;
 use Module::Metadata;
-use Sub::Documentation qw(search_documentation);
+use Sub::Documentation qw(get_documentation search_documentation);
 use List::MoreUtils qw(uniq);
 use Class::Load qw(load_class);
+use Class::Unload;
+use Clone qw(clone);
+use Data::Dumper;
 
 use Moose;
 use Moose::Util::TypeConstraints ();
@@ -89,6 +92,7 @@ func _trim (Str $str!) {
 
 func _tidy(Str $str!) {
     $str =~ m{^(?:\s*\n([ \t\r]+)|(\s+))\S}s or return $str;
+    return $str unless defined $1;
     my $indent = quotemeta $1;
     $str =~ s{^$indent}{}mg;
     $str =~ s{([\n]){2,}}{$1 x 2}seg;
@@ -236,22 +240,24 @@ func _proc_ns ($prefix, $super, $ns, @documentation) {
     };
 }
 
-use namespace::clean;
-
-method weave_section ($doc, $input) {
-    
-    my $filename = $input->{filename};
-
+func _weave ($filename) {
     my $info = Module::Metadata->new_from_file( $filename );
     
+    my @pod;
+
     my $module = $info->name;
-    
+
+    {
+        my $olddoc = get_documentation;
+        @$olddoc = ();
+    }
+
     load_class($module);
-    
+
     my @namespaces = _filter_pkglist($info->packages_inside);
-    
+
     my (@methods, @functions, %parents);
-    
+
     foreach my $ns (@namespaces) {
         my @documentation = search_documentation(
             package => $ns,
@@ -270,8 +276,8 @@ method weave_section ($doc, $input) {
 
     }
     
-    push @{ $doc->children } => _nested('command', 'head1', 'METHODS', @methods) if @methods;
-    push @{ $doc->children } => _nested('command', 'head1', 'FUNCTIONS', @functions) if @functions;
+    push @pod => _nested('command', 'head1', 'METHODS', @methods) if @methods;
+    push @pod => _nested('command', 'head1', 'FUNCTIONS', @functions) if @functions;
     
     if (keys %parents) {
         my @extends;
@@ -296,8 +302,43 @@ method weave_section ($doc, $input) {
                 push @extends => _list(@list);
             }
         }
-        push @{ $doc->children } => _nested('command', 'head1', 'EXTENDS', @extends); 
+        push @pod => _nested('command', 'head1', 'EXTENDS', @extends); 
     }
+    
+    return @pod;
+}
+
+use namespace::clean;
+
+method weave_section ($doc, $input) {
+
+    pipe(my $R, my $W) or die "cannot pipe: $!";
+
+    my $filename = $input->{filename};
+
+    my $pid = fork;
+    die "cannot fork: $!" unless defined $pid;
+    unless ($pid) {
+        close $R;
+        my @doc;
+        eval {
+            @doc = _weave($filename);
+        };
+        if ($@) {
+            print STDERR $@;
+        } else {
+            print $W Dumper([@doc]);
+        }
+        close $W;
+        exit;
+    }
+    waitpid $pid, 0;
+    close $W;
+    my $inp = join '' => <$R>;
+    my $VAR1;
+    eval $inp; ## no critic
+    die $@ if $@;
+    push @{ $doc->children } => @$VAR1;
 }
 
 use lib 'lib';
