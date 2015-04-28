@@ -6,7 +6,7 @@ use lib '.';
 use lib 'lib';
 use t::lib;
 
-my @tests = qw(foo bar);
+my @tests = qw(foo bar foo1);
 
 plan tests => scalar(@tests);
 
