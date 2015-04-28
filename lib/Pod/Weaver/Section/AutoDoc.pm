@@ -217,7 +217,9 @@ func _get_methods ($prefix, $parent, $type, @documentation) {
     return @methods;
 }
 
-func _proc_ns ($prefix, $super, $ns, @documentation) {
+func _proc_ns ($prefix, $super, $ns, $circle, @documentation) {
+    return if grep { $_ eq $ns } @$circle;
+    push @$circle => $ns;
     my @methods = _get_methods($prefix, $super, 'method', @documentation);
 
     my @parents = _get_parents( $ns );
@@ -229,7 +231,8 @@ func _proc_ns ($prefix, $super, $ns, @documentation) {
             package => $parent,
             glob_type => 'CODE',
         );
-        my $R = _proc_ns ($prefix, $parent, $parent, @documentation);
+        my $R = _proc_ns ($prefix, $parent, $parent, $circle, @documentation);
+        next unless $R;
         %parents = (%parents, %{ $R->{parents} });
         push @methods => @{ $R->{methods} };
     }
@@ -257,6 +260,8 @@ func _weave ($filename) {
     my @namespaces = _filter_pkglist($info->packages_inside);
 
     my (@methods, @functions, %parents);
+    
+    my $circle = [];
 
     foreach my $ns (@namespaces) {
         my @documentation = search_documentation(
@@ -266,7 +271,8 @@ func _weave ($filename) {
 
         my $prefix = $module ne $ns ? "${ns}::" : "";
         
-        my $R = _proc_ns($prefix, undef, $ns, @documentation);
+        my $R = _proc_ns($prefix, undef, $ns, $circle, @documentation);
+        next unless $R;
 
         push @methods => @{ $R->{methods} };
 
